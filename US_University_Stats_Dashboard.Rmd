@@ -1,0 +1,299 @@
+---
+title: "U.S University Statistics"
+output: 
+  flexdashboard::flex_dashboard:
+    source_code: embed
+    theme: flatly
+    orientation: rows
+    vertical_layout: fill
+    
+---
+
+```{r setup, include=FALSE}
+
+
+#install.packages(flexdashboard)
+library(flexdashboard)
+#install.packages(knitr)
+library(knitr)
+#install.packages(DT)
+library(DT)
+#install.packages(ggplot2)
+library(ggplot2)
+#install.packages(plotly)
+library(plotly)
+#install.packages(dplyr)
+library(dplyr)
+#install.packages(rpivotTable)
+library(rpivotTable)
+#install.packages(openintro)
+library(openintro)
+#install.packages(highcharter)
+library(highcharter)
+#install.packages(ggvis)
+library(ggvis)
+```
+
+
+```{r}
+setwd("/Users/Vineet PC/Downloads/R Dashboard/test 2")
+temp = list.files(pattern="*.csv")
+myfiles = lapply(temp, read.csv)
+x=data.frame()
+for(i in 1:length(myfiles)){
+  myfiles[[i]]$YearOfData <- substr(temp[i], 7, 10)
+  x=rbind(x,myfiles[[i]])
+}
+
+colnames(x)[1] <- c("UNITID")
+
+x <- x[,c("UNITID",
+          "INSTNM",
+          "CITY",
+          "STABBR",
+          "ST_FIPS",
+          "REGION",
+          "ADM_RATE",
+          "YearOfData",
+          "ADM_RATE_ALL",
+          "COMPL_RPY_1YR_RT",
+          "PCIP01",
+          "PCIP03",
+          "PCIP04",
+          "PCIP05",
+          "PCIP09",
+          "PCIP10",
+          "PCIP11",
+          "PCIP12",
+          "PCIP13",
+          "PCIP14",
+          "PCIP15",
+          "PCIP16",
+          "PCIP19",
+          "PCIP22",
+          "PCIP23",
+          "PCIP24",
+          "PCIP25",
+          "PCIP26",
+          "PCIP27",
+          "PCIP29",
+          "PCIP30",
+          "PCIP31",
+          "PCIP38",
+          "PCIP39",
+          "PCIP40",
+          "PCIP41",
+          "PCIP42",
+          "PCIP43",
+          "PCIP44",
+          "PCIP45",
+          "PCIP46",
+          "PCIP47",
+          "PCIP48",
+          "PCIP49",
+          "PCIP50",
+          "PCIP51",
+          "PCIP52",
+          "PCIP54",
+          "TUITIONFEE_IN",
+          "TUITIONFEE_OUT",
+          "AVGFACSAL",
+          "FEMALE",
+          "MARRIED",
+          "GRADS")]
+
+# Replacing with NAs
+
+x[x=="PrivacySuppressed"] <- NA
+x[x=="NULL"] <- NA
+x[x==""] <- NA
+
+
+```
+
+Universities
+========================================
+
+```{r}
+aa <- x %>%
+         group_by(STABBR) %>%
+         summarize(total = n_distinct(UNITID))
+aa$STABBR <- abbr2state(aa$STABBR)
+
+h1 <- highchart() %>%
+         hc_title(text = "Which states have the most universities?") %>%
+         hc_add_series_map(usgeojson, aa,
+                           name = "STABBR",
+                           value = "total",
+                           joinBy = c("woename", "STABBR")) %>%
+         hc_mapNavigation(enabled = T) %>%
+  hc_add_theme(hc_theme_chalk())
+
+h1
+```
+
+
+Popular Degrees
+=====================================
+
+```{r}
+aa <- x %>%
+  group_by(STABBR) %>%
+  summarize(total = n_distinct(UNITID))
+aa$STABBR <- abbr2state(aa$STABBR)
+
+aa <- aa %>% top_n(5)
+ap <- x %>% filter(STABBR %in% state2abbr(aa$STABBR)) %>% select(c("PCIP01",
+                     "PCIP03",
+                     "PCIP04",
+                     "PCIP05",
+                     "PCIP09",
+                     "PCIP10",
+                     "PCIP11",
+                     "PCIP12",
+                     "PCIP13",
+                     "PCIP14",
+                     "PCIP15",
+                     "PCIP16",
+                     "PCIP19",
+                     "PCIP22",
+                     "PCIP23",
+                     "PCIP24",
+                     "PCIP25",
+                     "PCIP26",
+                     "PCIP27",
+                     "PCIP29",
+                     "PCIP30",
+                     "PCIP31",
+                     "PCIP38",
+                     "PCIP39",
+                     "PCIP40",
+                     "PCIP41",
+                     "PCIP42",
+                     "PCIP43",
+                     "PCIP44",
+                     "PCIP45",
+                     "PCIP46",
+                     "PCIP47",
+                     "PCIP48",
+                     "PCIP49",
+                     "PCIP50",
+                     "PCIP51",
+                     "PCIP52",
+                     "PCIP54"))
+for(i in 1:length(ap)){
+  ap[i] <- as.numeric(as.vector(unlist(ap[i])))
+  ap[i] <- ap[i]*100
+}
+ap2 <- data.frame(ap %>% summarise_each(funs(mean(., na.rm = TRUE))))
+
+lis2 <- c(as.numeric(ap2[1,]))
+lis2 <- round(lis2,2)
+
+lis1 <- c("Agriculture, Agriculture Operations, And Related Sciences.",
+          "Natural Resources And Conservation.",
+          "Architecture And Related Services.",
+          "Area, Ethnic, Cultural, Gender, And Group Studies.",
+          "Communication, Journalism, And Related Programs.",
+          "Communications Technologies/Technicians And Support Services.",
+          "Computer And Information Sciences And Support Services.",
+          "Personal And Culinary Services.",
+          "Education.",
+          "Engineering.",
+          "Engineering Technologies And Engineering-Related Fields.",
+          "Foreign Languages, Literatures, And Linguistics.",
+          "Family And Consumer Sciences/Human Sciences.",
+          "Legal Professions And Studies.",
+          "English Language And Literature/Letters.",
+          "Liberal Arts And Sciences, General Studies And Humanities.",
+          "Library Science.",
+          "Biological And Biomedical Sciences.",
+          "Mathematics And Statistics.",
+          "Military Technologies And Applied Sciences.",
+          "Multi/Interdisciplinary Studies.",
+          "Parks, Recreation, Leisure, And Fitness Studies.",
+          "Philosophy And Religious Studies.",
+          "Theology And Religious Vocations.",
+          "Physical Sciences.",
+          "Science Technologies/Technicians.",
+          "Psychology.",
+          "Homeland Security, Law Enforcement, Firefighting And Related Protective Services.",
+          "Public Administration And Social Service Professions.",
+          "Social Sciences.",
+          "Construction Trades.",
+          "Mechanic And Repair Technologies/Technicians.",
+          "Precision Production.",
+          "Transportation And Materials Moving.",
+          "Visual And Performing Arts.",
+          "Health Professions And Related Programs.",
+          "Business, Management, Marketing, And Related Support Services.",
+          "History.")
+
+h2 <- highchart() %>% 
+  hc_add_series(name="Percentage of Degrees Awarded",data=lis2, type = "column", color = "cyan") %>%
+  hc_xAxis(categories = lis1) %>%
+  hc_title(text = "What are the most popular courses in top states?") %>%
+  hc_add_theme(hc_theme_chalk())
+
+h2
+
+```
+
+
+Tuition Fee
+========================================
+
+```{r}
+aa <- x %>%
+  group_by(STABBR) %>%
+  summarize(total = n_distinct(UNITID))
+aa$STABBR <- abbr2state(aa$STABBR)
+aa <- aa %>% top_n(5)
+
+x$TUITIONFEE_IN <- as.numeric(as.vector(x$TUITIONFEE_IN))
+x$TUITIONFEE_OUT <- as.numeric(as.vector(x$TUITIONFEE_OUT))
+
+
+z <- x %>% filter(STABBR %in% state2abbr(aa$STABBR)) %>% select(c("YearOfData","TUITIONFEE_IN", "TUITIONFEE_OUT")) %>% group_by(YearOfData) %>% summarise_each(funs(mean(., na.rm = TRUE)))
+
+z$TUITIONFEE_IN <- round(z$TUITIONFEE_IN,2)
+z$TUITIONFEE_OUT <- round(z$TUITIONFEE_OUT,2)
+z$Gap <- z$TUITIONFEE_OUT - z$TUITIONFEE_IN
+
+h3 <- highchart() %>%
+  hc_title(text = "How much has the Tuition Fee increased in these top states?") %>%
+  hc_xAxis(categories = z$YearOfData) %>%
+  hc_add_series(name = "Tuition Fee_IN", data = z$TUITIONFEE_IN, color = "lightgreen") %>%
+  hc_add_series(name = "Tuition Fee_OUT", data = z$TUITIONFEE_OUT, color = "yellow") %>%
+  hc_add_theme(hc_theme_chalk())
+
+h3
+
+```
+
+Report
+========================================
+
+<b>U.S. Education Statistics</b>
+
+<b>Name:</b>	Vineet Jain<br>
+<b>Student Number:</b>	19210982<br>
+<b>Programme:</b> MCM1 (Data Analytics)<br>
+<b>Module Code:</b>	CA682<br>
+<b>Assignment Title:</b>	Data Visualisation<br>
+<b>Submission Date:</b>	13 Dec 2019<br>
+<b>Module Coordinator:</b>	Dr Suzanne Little<br>
+
+
+Raw Data Source: https://catalog.data.gov/dataset/college-scorecard/resource/2a7f670e-0799-436a-9394-df0a9b3ba7c5
+ (Size: 2.65 GB)
+
+Data Dictionary Source: https://www.kaggle.com/kaggle/college-scorecard#CollegeScorecardDataDictionary-09-12-2015.csv 
+ (Size: 483 KB)
+
+
+<b>Conclusions</b>
+
+The map tells there are more universities in top 5 states of U.S than all the remaining states combined. Not only these states are top 5 in university count, but as per Wikipedia these are also the top 5 most populated states. There is obviously a direct correlation as more the universities, more the incoming students each year. Hawaii, a state with such small land area has almost the same university count as North Dakota and South Dakota and in fact more than double than Wyoming.
+As per the bar/column graph most degrees are being awarded in health professions and related courses (more than those in computing and business management combined), which raises the question – are there really that many jobs in healthcare industry?
+Lastly, we can see the increase in tuition fee over the past 17 years in the time series. If we look closely, we see the gap between in-state and out-of-state fees increasing with about 1500 USD difference in the early 2000s to 2000 USD in 2009 and 3000 USD in 2017.
