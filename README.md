@@ -1,7 +1,7 @@
-**Dashboard**
+**Dashboard:**
 https://vineetjain.herokuapp.com/US_University_Stats_Dashboard.html
 
-**How to run  the RMD file in RStudio**
+**How to run  the RMD file in RStudio:**
 ![alt text](https://github.com/vinejain/r-flexdashboard-data-viz/blob/master/how-to-run/1.jpg?raw=true)
 ![alt text](https://github.com/vinejain/r-flexdashboard-data-viz/blob/master/how-to-run/2.jpg?raw=true)
 
