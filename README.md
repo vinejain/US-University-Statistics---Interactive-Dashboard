@@ -1,3 +1,3 @@
 Dashboard:
 
-https://vinejain.github.io/US_University_Statistics_InteractiveDashboard/US_University_Stats_Dashboard.html#universities
+https://vineetjain.herokuapp.com/US_University_Stats_Dashboard.html
