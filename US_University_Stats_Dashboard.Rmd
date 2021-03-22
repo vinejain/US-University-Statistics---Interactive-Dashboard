@@ -276,15 +276,6 @@ Report
 
 <b>U.S. Education Statistics</b>
 
-<b>Name:</b>	Vineet Jain<br>
-<b>Student Number:</b>	19210982<br>
-<b>Programme:</b> MCM1 (Data Analytics)<br>
-<b>Module Code:</b>	CA682<br>
-<b>Assignment Title:</b>	Data Visualisation<br>
-<b>Submission Date:</b>	13 Dec 2019<br>
-<b>Module Coordinator:</b>	Dr Suzanne Little<br>
-
-
 Raw Data Source: https://catalog.data.gov/dataset/college-scorecard/resource/2a7f670e-0799-436a-9394-df0a9b3ba7c5
  (Size: 2.65 GB)
 
